@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), OnChatClickListener {
 
     override fun onChatItemClick(chat: ChatItem) {
         val intent = Intent(this, ChatWindow::class.java)
-        intent.putExtra("message", chat.message)
+//        intent.putExtra("message", chat.messages)
         startActivity(intent)
     }
 

@@ -1,6 +1,7 @@
 package com.example.fourthweekapp.data
 
 import com.example.fourthweekapp.data.models.ChatItem
+import com.example.fourthweekapp.data.models.MessageItem
 import com.github.javafaker.Faker
 
 class Repository {
@@ -8,13 +9,28 @@ class Repository {
     private val chatList = ArrayList<ChatItem>()
     private var id = 0
 
+    private fun getMessageItem(): MessageItem{
+        return MessageItem(
+            message = faker.rickAndMorty().quote(),
+            date = faker.date().birthday(),
+            sender = false,
+            hasBeenEdited = false,
+            wasDeleted = false,
+        )
+    }
+
     private fun getChatItem(): ChatItem {
         val name = faker.rickAndMorty().character()
+        val messages:MutableList<MessageItem> = ArrayList()
+        for(i in 1..10){
+            val item = getMessageItem()
+            messages.add(item)
+        }
 
         return ChatItem(
             name = name,
             icon = name.first().uppercaseChar(),
-            message = faker.rickAndMorty().quote(),
+            messages = messages,
             iconColor = faker.color().hex(),
             date = faker.date().birthday(),
             unreadMessage = 0,
@@ -38,10 +54,15 @@ class Repository {
         for (i in 0 until chatList.size) {
             if (faker.bool().bool() && faker.bool().bool()) {
                 val oldItem = chatList[i]
-                val messages = oldItem.unreadMessage
+                val oldUnread = oldItem.unreadMessage
+                val messages:MutableList<MessageItem> = ArrayList()
+                for(i in 1..10){
+                    val item = getMessageItem()
+                    messages.add(item)
+                }
                 val newItem = oldItem.copy(
-                    unreadMessage = faker.number().numberBetween(messages, messages + 5),
-                    message = faker.rickAndMorty().quote(),
+                    unreadMessage = faker.number().numberBetween(oldUnread, oldUnread + 5),
+                    messages = messages,
                 )
                 chatList[i] = newItem
             }

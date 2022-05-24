@@ -73,6 +73,7 @@ class Adapter(private val onChatClickListener: OnChatClickListener) :
 
     class ChatItemViewHolder(itemView: View) : BasicViewHolder(itemView) {
 
+
         @SuppressLint("SimpleDateFormat")
         private val timeFormatter = SimpleDateFormat("HH:mm")
 
@@ -87,7 +88,7 @@ class Adapter(private val onChatClickListener: OnChatClickListener) :
             avatar.text = item.icon.toString()
             avatarBackground.setCardBackgroundColor(Color.parseColor(item.iconColor))
             chatName.text = item.name
-            chatText.text = item.message
+            chatText.text = item.messages.get(item.messages.size-1).message
             date.text = timeFormatter.format(item.date)
             unreadNumber.isVisible = item.unreadMessage != 0
             unreadNumber.text = item.unreadMessage.toString()

@@ -5,7 +5,7 @@ import java.util.*
 data class ChatItem(
     val name: String,
     val icon: Char,
-    val message: String,
+    val messages: List<MessageItem>,
     val date: Date,
     val unreadMessage: Int,
     val iconColor: String,
