@@ -49,14 +49,12 @@ class Adapter(private val onChatClickListener: OnChatClickListener) :
                 holder.itemView.setOnClickListener(View.OnClickListener {
                     onChatClickListener.onChatItemClick(chatItem)
                 }
-
                 )
             }
             is ProgressbarViewHolder -> {
                 //no-op
             }
         }
-
     }
 
     override fun getItemCount(): Int {

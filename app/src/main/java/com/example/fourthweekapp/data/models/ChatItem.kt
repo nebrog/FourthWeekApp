@@ -9,5 +9,6 @@ data class ChatItem(
     val date: Date,
     val unreadMessage: Int,
     val iconColor: String,
+    val id: Int,
 )
 

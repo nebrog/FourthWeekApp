@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity(), OnChatClickListener {
 
     companion object {
         private const val PAGE_SIZE_CHATS = 10
-        private const val PAGE_LOADING_DURATION_MS = 1_000L
+        private const val PAGE_LOADING_DURATION_MS = 2_000L
     }
 
     private val repository = Repository()
@@ -28,7 +28,25 @@ class MainActivity : AppCompatActivity(), OnChatClickListener {
         val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
-        adapter.addNewChats(repository.getRandomChatList(0, 10))
+        adapter.addNewChats(repository.getRandomChatList(0, 20))
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            private var isLoading = false
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                val totalItemIndex = layoutManager.itemCount - 1
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                if (!isLoading && lastVisibleItem == totalItemIndex) {
+                    isLoading = true
+                    val offset = adapter.itemCount
+                    recyclerView.postDelayed({
+                        val newChats = repository.getRandomChatList(offset, PAGE_SIZE_CHATS)
+                        adapter.addNewChats(newChats)
+                        isLoading = false
+                    }, PAGE_LOADING_DURATION_MS)
+                }
+            }
+        })
         initSwipeRefresh()
     }
 

@@ -6,9 +6,11 @@ import com.github.javafaker.Faker
 class Repository {
     private val faker = Faker()
     private val chatList = ArrayList<ChatItem>()
+    private var id = 0
 
     private fun getChatItem(): ChatItem {
         val name = faker.rickAndMorty().character()
+
         return ChatItem(
             name = name,
             icon = name.first().uppercaseChar(),
@@ -16,6 +18,8 @@ class Repository {
             iconColor = faker.color().hex(),
             date = faker.date().birthday(),
             unreadMessage = 0,
+            id = id++
+
         )
     }
 
