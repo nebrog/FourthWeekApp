@@ -44,6 +44,7 @@ class Repository {
         }
 
     }
+
     fun updateChatsList(): List<ChatItem> {
         updateExistingElements()
         chatList.sortByDescending { it.unreadMessage }

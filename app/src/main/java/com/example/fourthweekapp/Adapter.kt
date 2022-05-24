@@ -13,7 +13,9 @@ import com.example.fourthweekapp.data.models.ChatItem
 import java.text.SimpleDateFormat
 
 class Adapter(private val onChatClickListener: OnChatClickListener) :
-    RecyclerView.Adapter<Adapter.ChatItemViewHolder>() {
+    RecyclerView.Adapter<Adapter.BasicViewHolder>() {
+    private val CHATS = 1
+    private val PROGRESS = 2
     private var chatsList: List<ChatItem> = ArrayList()
 
     fun setChats(chats: List<ChatItem>) {
@@ -27,27 +29,51 @@ class Adapter(private val onChatClickListener: OnChatClickListener) :
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatItemViewHolder {
-        val item =
-            LayoutInflater.from(parent.context).inflate(R.layout.recycler_item, parent, false)
-        return ChatItemViewHolder(item)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BasicViewHolder {
+        if (viewType == CHATS) {
+            val item =
+                LayoutInflater.from(parent.context).inflate(R.layout.recycler_item, parent, false)
+            return ChatItemViewHolder(item)
+        } else {
+            val item = LayoutInflater.from(parent.context)
+                .inflate(R.layout.recycler_item_progress_bar, parent, false)
+            return ProgressbarViewHolder(item)
+        }
     }
 
-    override fun onBindViewHolder(holder: ChatItemViewHolder, position: Int) {
-        val chatItem = chatsList[position]
-        holder.bindData(chatItem)
-        holder.itemView.setOnClickListener(View.OnClickListener {
-            onChatClickListener.onChatItemClick(chatItem)
+    override fun onBindViewHolder(holder: BasicViewHolder, position: Int) {
+        when (holder) {
+            is ChatItemViewHolder -> {
+                val chatItem = chatsList[position]
+                holder.bindData(chatItem)
+                holder.itemView.setOnClickListener(View.OnClickListener {
+                    onChatClickListener.onChatItemClick(chatItem)
+                }
+
+                )
+            }
+            is ProgressbarViewHolder -> {
+                //no-op
+            }
         }
 
-        )
     }
 
     override fun getItemCount(): Int {
-        return chatsList.size
+        return chatsList.size + 1
     }
 
-    class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    override fun getItemViewType(position: Int): Int {
+        if (position == chatsList.size) {
+            return PROGRESS
+        } else {
+            return CHATS
+        }
+    }
+
+    sealed class BasicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    class ChatItemViewHolder(itemView: View) : BasicViewHolder(itemView) {
 
         @SuppressLint("SimpleDateFormat")
         private val timeFormatter = SimpleDateFormat("HH:mm")
@@ -70,4 +96,5 @@ class Adapter(private val onChatClickListener: OnChatClickListener) :
         }
     }
 
+    class ProgressbarViewHolder(itemView: View) : BasicViewHolder(itemView)
 }
