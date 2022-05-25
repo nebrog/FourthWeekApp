@@ -10,10 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FourthWeekApp">
         <activity
-            android:name=".ChatWindow"
+            android:name=".ui.communication.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.chats.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

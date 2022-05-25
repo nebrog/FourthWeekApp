@@ -4,16 +4,18 @@ import com.example.fourthweekapp.data.models.ChatItem
 import com.example.fourthweekapp.data.models.MessageItem
 import com.github.javafaker.Faker
 
-class Repository {
+object Repository {
+
+
     private val faker = Faker()
-    private val chatList = ArrayList<ChatItem>()
+    private var chatList = ArrayList<ChatItem>()
     private var id = 0
 
-    private fun getMessageItem(): MessageItem{
+    private fun getMessageItem(): MessageItem {
         return MessageItem(
             message = faker.rickAndMorty().quote(),
             date = faker.date().birthday(),
-            sender = false,
+            sender = faker.bool().bool(),
             hasBeenEdited = false,
             wasDeleted = false,
         )
@@ -21,8 +23,8 @@ class Repository {
 
     private fun getChatItem(): ChatItem {
         val name = faker.rickAndMorty().character()
-        val messages:MutableList<MessageItem> = ArrayList()
-        for(i in 1..10){
+        val messages: MutableList<MessageItem> = ArrayList()
+        for (i in 1..20) {
             val item = getMessageItem()
             messages.add(item)
         }
@@ -37,6 +39,15 @@ class Repository {
             id = id++
 
         )
+    }
+
+    fun findMessageById(id: Int): List<MessageItem> {
+        var iter = 0
+        while (chatList.get(iter).id != id) {
+            iter++
+        }
+        return chatList.get(iter).messages
+
     }
 
     fun getRandomChatList(offset: Int, count: Int): List<ChatItem> {
@@ -55,8 +66,9 @@ class Repository {
             if (faker.bool().bool() && faker.bool().bool()) {
                 val oldItem = chatList[i]
                 val oldUnread = oldItem.unreadMessage
-                val messages:MutableList<MessageItem> = ArrayList()
-                for(i in 1..10){
+                val messages: MutableList<MessageItem> = ArrayList()
+                messages.addAll(oldItem.messages)
+                for (i in 1..10) {
                     val item = getMessageItem()
                     messages.add(item)
                 }

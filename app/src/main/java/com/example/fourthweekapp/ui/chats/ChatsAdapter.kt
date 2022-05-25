@@ -1,4 +1,4 @@
-package com.example.fourthweekapp
+package com.example.fourthweekapp.ui.chats
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -9,11 +9,12 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fourthweekapp.R
 import com.example.fourthweekapp.data.models.ChatItem
 import java.text.SimpleDateFormat
 
-class Adapter(private val onChatClickListener: OnChatClickListener) :
-    RecyclerView.Adapter<Adapter.BasicViewHolder>() {
+class ChatsAdapter(private val onChatClickListener: OnChatClickListener) :
+    RecyclerView.Adapter<ChatsAdapter.BasicViewHolder>() {
     private val CHATS = 1
     private val PROGRESS = 2
     private var chatsList: List<ChatItem> = ArrayList()

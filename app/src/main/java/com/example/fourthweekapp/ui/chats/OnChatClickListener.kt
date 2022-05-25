@@ -1,4 +1,4 @@
-package com.example.fourthweekapp
+package com.example.fourthweekapp.ui.chats
 
 import com.example.fourthweekapp.data.models.ChatItem
 
