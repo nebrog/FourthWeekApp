@@ -18,22 +18,22 @@ class ChatsAdapter(private val onChatClickListener: OnChatClickListener) :
     RecyclerView.Adapter<ChatsAdapter.BasicViewHolder>() {
     private val CHATS = 1
     private val PROGRESS = 2
-    private var chatsList: List<ChatItem> = ArrayList()
+    private var chatsList = ArrayList<ChatItem>()
 
     fun setChats(chats: List<ChatItem>) {
         val callback = DiffUtilCallback(chatsList, chats)
         val diffResult = DiffUtil.calculateDiff(callback)
-        chatsList = chats
+        chatsList.clear()
+        chatsList.addAll(chats)
         diffResult.dispatchUpdatesTo(this)
 
 
     }
 
     fun addNewChats(newChats: List<ChatItem>) {
-        val temp = chatsList + newChats
-        val callback = DiffUtilCallback(chatsList, temp)
+        val callback = DiffUtilCallback(chatsList, chatsList + newChats)
         val diffResult = DiffUtil.calculateDiff(callback)
-        chatsList = temp
+        chatsList.addAll(newChats)
         diffResult.dispatchUpdatesTo(this)
 
     }
@@ -127,8 +127,7 @@ class ChatsAdapter(private val onChatClickListener: OnChatClickListener) :
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldItems.get(oldItemPosition)
             val newItem = newItems.get(newItemPosition)
-            return oldItem.messages.size == newItem.messages.size &&
-                    oldItem.unreadMessage == newItem.unreadMessage
+            return oldItem == newItem
         }
     }
 }
