@@ -9,9 +9,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.fourthweekapp.R
 import com.example.fourthweekapp.data.Repository
 import com.example.fourthweekapp.data.models.ChatItem
-import com.example.fourthweekapp.ui.communication.ChatActivity
+import com.example.fourthweekapp.ui.communication.CommunicationActivity
 
-class MainActivity : AppCompatActivity(), OnChatClickListener {
+class ChatsActivity : AppCompatActivity(), OnChatClickListener {
 
     companion object {
         private const val PAGE_SIZE_CHATS = 10
@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity(), OnChatClickListener {
     }
 
     override fun onChatItemClick(chat: ChatItem) {
-        val intent = Intent(this, ChatActivity::class.java)
-        intent.putExtra("id",chat.id)
+        val intent = Intent(this, CommunicationActivity::class.java)
+        intent.putExtra("id", chat.id)
         startActivity(intent)
     }
 

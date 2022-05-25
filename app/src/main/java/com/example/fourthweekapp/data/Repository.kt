@@ -10,6 +10,7 @@ object Repository {
     private val faker = Faker()
     private var chatList = ArrayList<ChatItem>()
     private var id = 0
+    private var messageId = 0
 
     private fun getMessageItem(): MessageItem {
         return MessageItem(
@@ -18,7 +19,9 @@ object Repository {
             sender = faker.bool().bool(),
             hasBeenEdited = false,
             wasDeleted = false,
-        )
+            id = messageId++,
+
+            )
     }
 
     private fun getChatItem(): ChatItem {
@@ -41,14 +44,15 @@ object Repository {
         )
     }
 
-    fun findMessageById(id: Int): List<MessageItem> {
+    fun findMessageById(id: Int): ChatItem {
         var iter = 0
         while (chatList.get(iter).id != id) {
             iter++
         }
-        return chatList.get(iter).messages
+        return chatList.get(iter)
 
     }
+
 
     fun getRandomChatList(offset: Int, count: Int): List<ChatItem> {
         val diff = (offset + count) - chatList.size
@@ -80,6 +84,64 @@ object Repository {
             }
         }
 
+    }
+
+    fun randomizeChat(chatId: Int): ChatItem {
+        val chatIndex = chatIndexById(chatId)
+        val chatItem = chatList.get(chatIndex)
+
+        val messageList = ArrayList(chatItem.messages)
+        for (i in messageList.indices) {
+            val oldMessage = messageList[i]
+            val isEdited = faker.bool().bool()
+            val newText = if (isEdited) {
+                faker.witcher().quote()
+            } else {
+                oldMessage.message
+            }
+            val newMessage = oldMessage.copy(
+                message = newText,
+                hasBeenEdited = isEdited,
+                wasDeleted = faker.bool().bool() && faker.bool().bool(),
+            )
+            messageList[i] = newMessage
+        }
+
+        val newChatItem = chatItem.copy(
+            messages = messageList
+        )
+        chatList.set(chatIndex, newChatItem)
+
+        return newChatItem
+    }
+
+    fun getRandomMessages(offset: Int, count: Int, id: Int): List<MessageItem> {
+        val chatIndex = chatIndexById(id)
+        val chatItem = chatList.get(chatIndex)
+
+        val newMessages = ArrayList(chatItem.messages)
+        val diff = (offset + count) - newMessages.size
+        var i = 0
+        while (diff > i) {
+            val item = getMessageItem()
+            newMessages.add(item)
+            i++
+        }
+
+        val newChatItem = chatItem.copy(messages = newMessages)
+        chatList.set(chatIndex, newChatItem)
+
+        return newMessages.subList(offset, offset + count)
+
+    }
+
+    private fun chatIndexById(chatId: Int): Int {
+        for (i in chatList.indices) {
+            if (chatList.get(i).id == chatId) {
+                return i
+            }
+        }
+        throw IllegalStateException("Не найден чат с id=$chatId")
     }
 
     fun updateChatsList(): List<ChatItem> {

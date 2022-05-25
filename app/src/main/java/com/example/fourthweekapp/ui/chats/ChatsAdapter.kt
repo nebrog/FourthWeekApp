@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fourthweekapp.R
 import com.example.fourthweekapp.data.models.ChatItem
@@ -20,14 +21,21 @@ class ChatsAdapter(private val onChatClickListener: OnChatClickListener) :
     private var chatsList: List<ChatItem> = ArrayList()
 
     fun setChats(chats: List<ChatItem>) {
+        val callback = DiffUtilCallback(chatsList, chats)
+        val diffResult = DiffUtil.calculateDiff(callback)
         chatsList = chats
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
+
 
     }
 
     fun addNewChats(newChats: List<ChatItem>) {
-        chatsList = chatsList + newChats
-        notifyDataSetChanged()
+        val temp = chatsList + newChats
+        val callback = DiffUtilCallback(chatsList, temp)
+        val diffResult = DiffUtil.calculateDiff(callback)
+        chatsList = temp
+        diffResult.dispatchUpdatesTo(this)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BasicViewHolder {
@@ -89,7 +97,7 @@ class ChatsAdapter(private val onChatClickListener: OnChatClickListener) :
             avatar.text = item.icon.toString()
             avatarBackground.setCardBackgroundColor(Color.parseColor(item.iconColor))
             chatName.text = item.name
-            chatText.text = item.messages.get(item.messages.size-1).message
+            chatText.text = item.messages.get(0).message
             date.text = timeFormatter.format(item.date)
             unreadNumber.isVisible = item.unreadMessage != 0
             unreadNumber.text = item.unreadMessage.toString()
@@ -97,4 +105,30 @@ class ChatsAdapter(private val onChatClickListener: OnChatClickListener) :
     }
 
     class ProgressbarViewHolder(itemView: View) : BasicViewHolder(itemView)
+    class DiffUtilCallback(
+        private val oldItems: List<ChatItem>,
+        private val newItems: List<ChatItem>
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int {
+            return oldItems.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newItems.size
+        }
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems.get(oldItemPosition)
+            val newItem = newItems.get(newItemPosition)
+            return oldItem.id == newItem.id
+
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems.get(oldItemPosition)
+            val newItem = newItems.get(newItemPosition)
+            return oldItem.messages.size == newItem.messages.size &&
+                    oldItem.unreadMessage == newItem.unreadMessage
+        }
+    }
 }
